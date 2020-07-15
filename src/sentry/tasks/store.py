@@ -767,8 +767,15 @@ def _do_save_event(
                     attachment_cache.delete(cache_key)
 
             if start_time:
+                timing_opts = {}
+                data_tags = data.get("tags")
+                if data_tags and data_tags.get("sentry_internal") == "slometric":
+                    timing_opts = {"sample_rate": 1.0, "tags": {"sentry_internal": "slometric"}}
                 metrics.timing(
-                    "events.time-to-process", time() - start_time, instance=data["platform"]
+                    "events.time-to-process",
+                    time() - start_time,
+                    instance=data["platform"],
+                    **timing_opts
                 )
 
 
